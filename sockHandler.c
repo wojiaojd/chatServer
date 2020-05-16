@@ -96,7 +96,7 @@ void *sock_recv(void *args)
 void *sock_signup(void *args)
 {
     struct sockHandlerArgs *arg = args;
-    int id;
+    USRID id;
     //避免mysql_real_escape_string过程中全部都是需转义的字符,长度应为2*n+1
     char username[101];
     char pswd[201];
@@ -116,6 +116,7 @@ void *sock_signup(void *args)
         get_line(arg->fd, pswd, sizeof(pswd));
         DATABASE *db = db_getInstance();
         db_user_sign_up(id, username, pswd);
+        usrData_insert(id);
     }
     return NULL;
 }

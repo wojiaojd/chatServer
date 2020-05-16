@@ -9,10 +9,12 @@
 #endif //CHATSERVER_IDINDEXING_H
 
 #include <pthread.h>
+#include <hiredis/hiredis.h>
 
-#define MSGQUEUE_MAX_NUM 10
+#define MSGQUEUE_MAX_NUM 100
 #define USR_MAX_NUM 10000
 #define USR_FST_NUM 10000  //起始号码
+typedef int USRID ;
 
 struct msg{
     struct msg *next;
@@ -33,7 +35,7 @@ struct msgqueue{
 
 struct id_data{
     int fd;
-    int id;
+    USRID id;
     struct msgqueue *sndqueue;
 };
 
@@ -46,10 +48,14 @@ struct usrData{
 struct msg *msg_init();
 
 struct msgqueue *msgqueue_init(int max_num);
-int msgqueue_insert(struct msgqueue *msg_queue, char *real_msg);
-struct msg *msgqueue_pop(struct msgqueue *msg_queue);
 
-struct usrData *idindx_init();
+int usrData_msgqueue_insert(USRID usrid, char *real_msg);
+struct msg *usrData_msgqueue_pop(USRID usrid);
+
+struct usrData *usrData_init();
 /*用户注册,在用户数据数组中分配一个节点*/
-int usrData_insert(struct usrData* dataArray, struct id_data *idData);
-struct id_data *usrData_find(struct usrData *dataArray, int id);
+int usrData_insert(USRID usr_id);
+struct id_data *usrData_find(USRID id);
+
+redisContext *redis_getInstance();
+int redis_newFriend(USRID my_id, USRID friend_id);

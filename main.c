@@ -108,8 +108,8 @@ int main()
     database = db_startup();
 
     /*用户id索引数据数据结构*/
-    struct usrData *idindx;
-    idindx = idindx_init();
+    struct usrData *usr_data;
+    usr_data = usrData_init();
 
     /*添加线程池机制*/
     struct sockqueue *squeue;
@@ -173,7 +173,7 @@ int main()
                 }
                  */
                 /*线程池主动工作*/
-                struct sockHandlerArgs arg = {clientsock, idindx};
+                struct sockHandlerArgs arg = {clientsock, usr_data};
                 sockqueue_add(squeue, sock_recv, &arg);
                 /*clientsock*/
             }

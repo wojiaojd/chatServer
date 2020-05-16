@@ -4,13 +4,13 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/wojiaojd/CLionProjects/chatServer/database.c" "/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/database.c.o"
-  "/home/wojiaojd/CLionProjects/chatServer/errorhandler.c" "/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/errorhandler.c.o"
-  "/home/wojiaojd/CLionProjects/chatServer/main.c" "/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/main.c.o"
-  "/home/wojiaojd/CLionProjects/chatServer/pthreadpool.c" "/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/pthreadpool.c.o"
-  "/home/wojiaojd/CLionProjects/chatServer/sockHandler.c" "/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/sockHandler.c.o"
-  "/home/wojiaojd/CLionProjects/chatServer/sockqueue.c" "/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/sockqueue.c.o"
-  "/home/wojiaojd/CLionProjects/chatServer/usrData.c" "/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/usrData.c.o"
+  "/home/wojiaojd/chatServer/database.c" "/home/wojiaojd/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/database.c.o"
+  "/home/wojiaojd/chatServer/errorhandler.c" "/home/wojiaojd/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/errorhandler.c.o"
+  "/home/wojiaojd/chatServer/main.c" "/home/wojiaojd/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/main.c.o"
+  "/home/wojiaojd/chatServer/pthreadpool.c" "/home/wojiaojd/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/pthreadpool.c.o"
+  "/home/wojiaojd/chatServer/sockHandler.c" "/home/wojiaojd/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/sockHandler.c.o"
+  "/home/wojiaojd/chatServer/sockqueue.c" "/home/wojiaojd/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/sockqueue.c.o"
+  "/home/wojiaojd/chatServer/usrData.c" "/home/wojiaojd/chatServer/cmake-build-debug/CMakeFiles/chatServer.dir/usrData.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

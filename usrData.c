@@ -7,7 +7,9 @@
 #include "errorhandler.h"
 
 
-struct usrData *indexing = NULL;
+struct usrData *usr_data = NULL;
+////特别用来保存用户的好友关系
+redisContext *redisConn = NULL;
 
 struct msgqueue *msgqueue_init(int max_num)
 {
@@ -53,99 +55,120 @@ struct msg *msg_init()
     return m;
 }
 
-int msgqueue_insert(struct msgqueue *msg_queue, char *real_msg)
+int usrData_msgqueue_insert(USRID usrid, char *real_msg)
 {
-    assert(msg_queue != NULL);
     assert(real_msg != NULL);
-
-    pthread_mutex_lock(&(msg_queue->mutex));
-    while(msg_queue->cur_num == msg_queue->max_num && !msg_queue->close)
+    struct id_data *idData = usrData_find(usrid);
+    struct msgqueue *snd_queue = idData->sndqueue;
+    pthread_mutex_lock(&(snd_queue->mutex));
+    while(snd_queue->cur_num == snd_queue->max_num && !snd_queue->close)
     {
-        pthread_cond_wait(&(msg_queue->not_full), &(msg_queue->mutex));
+        pthread_cond_wait(&(snd_queue->not_full), &(snd_queue->mutex));
     }
-    if(msg_queue->close)
+    if(snd_queue->close)
     {
-        pthread_mutex_unlock(&(msg_queue->mutex));
+        pthread_mutex_unlock(&(snd_queue->mutex));
         return -1;
     }
     struct msg *m;
     m = msg_init();
     m->content = real_msg;
-    msg_queue->cur_num++;
-    if(msg_queue->cur_num == 1)
+    snd_queue->cur_num++;
+    if(snd_queue->cur_num == 1)
     {
-        msg_queue->head = m;
-        msg_queue->tail = m;
-        pthread_cond_broadcast(&(msg_queue->not_empty));
+        snd_queue->head = m;
+        snd_queue->tail = m;
+        pthread_cond_broadcast(&(snd_queue->not_empty));
     } else {
-        msg_queue->tail->next = m;
-        msg_queue->tail = m;
+        snd_queue->tail->next = m;
+        snd_queue->tail = m;
     }
-    pthread_mutex_unlock(&(msg_queue->mutex));
+    pthread_mutex_unlock(&(snd_queue->mutex));
     return 0;
 }
 //取出头节点
-struct msg *msgqueue_pop(struct msgqueue *msg_queue)
+struct msg *usrData_msgqueue_pop(USRID usrid)
 {
     struct msg *m = NULL;
-    pthread_mutex_lock(&(msg_queue->mutex));
-    while(msg_queue->cur_num == 0 && !msg_queue->close)
+    struct id_data *idData = usrData_find(usrid);
+    struct msgqueue *snd_queue = idData->sndqueue;
+    pthread_mutex_lock(&(snd_queue->mutex));
+    while(snd_queue->cur_num == 0 && !snd_queue->close)
     {
-        pthread_cond_wait(&(msg_queue->not_empty), &(msg_queue->mutex));
+        pthread_cond_wait(&(snd_queue->not_empty), &(snd_queue->mutex));
     }
-    if(msg_queue->close)
+    if(snd_queue->close)
     {
-        pthread_mutex_unlock(&(msg_queue->mutex));
+        pthread_mutex_unlock(&(snd_queue->mutex));
         return NULL;
     }
 
     //取出节点
-    msg_queue->cur_num--;
-    m = msg_queue->head;
-    if(msg_queue->cur_num == 0)
+    snd_queue->cur_num--;
+    m = snd_queue->head;
+    if(snd_queue->cur_num == 0)
     {
-        msg_queue->head = NULL;
-        msg_queue->tail = NULL;
-        pthread_cond_signal(&(msg_queue->empty));
+        snd_queue->head = NULL;
+        snd_queue->tail = NULL;
+        pthread_cond_signal(&(snd_queue->empty));
     } else {
-        msg_queue->head = m->next;
+        snd_queue->head = m->next;
     }
-    pthread_mutex_unlock(&(msg_queue->mutex));
+    pthread_mutex_unlock(&(snd_queue->mutex));
     return m;
 }
 
-struct usrData *idindx_init()
+struct usrData *usrData_init()
 {
-    if(indexing != NULL)
+    if(usr_data != NULL)
     {
-        return indexing;
+        return usr_data;
     }
-    indexing = (struct usrData*)calloc(1, sizeof(struct usrData));
+    usr_data = (struct usrData*)calloc(1, sizeof(struct usrData));
     for(int i = 0; i < USR_MAX_NUM; i++)
     {
-        indexing->data[i] = NULL;
+        usr_data->data[i] = NULL;
     }
-    if(pthread_rwlock_init(&(indexing->rwlock), NULL))
+    if(pthread_rwlock_init(&(usr_data->rwlock), NULL))
     {
         error_handler("usrDataArray_mutex_r_init");
     }
 
-    indexing->cur_num = 0;
-    return indexing;
+    usr_data->cur_num = 0;
+    return usr_data;
 }
 ///用户数据结构或可改进,比如改成红黑树
-int usrData_insert(struct usrData* dataArray, struct id_data *idData)
+int usrData_insert(USRID usrid)
 {
-    int index = idData->id - USR_FST_NUM;
-    if(dataArray->data[index] != NULL)
+    struct id_data *idData = NULL;
+    idData = calloc(1, sizeof(struct id_data));
+    idData->id = usrid;
+    idData->fd = 0;
+    idData->sndqueue = msgqueue_init(MSGQUEUE_MAX_NUM);
+    USRID index = usrid - USR_FST_NUM;
+    if(usr_data->data[index] != NULL)
     {
         return -1;
     }
-    dataArray->data[index] = idData;
+    usr_data->data[index] = idData;
     return 0;
 }
 ///通过id查找用户数据
-struct id_data *usrData_find(struct usrData *dataArray, int id)
+struct id_data *usrData_find(USRID id)
 {
-    return dataArray->data[id];
+    return usr_data->data[id];
+}
+
+redisContext *redis_getInstance()
+{
+    if(redisConn != NULL)
+    {
+        return redisConn;
+    }
+    redisConn = redisConnect("127.0.0.1", 6379);
+    if(redisConn->err)
+    {
+        return NULL;
+    }
+    return redisConn;
 }

@@ -20,3 +20,4 @@ add_executable(chatServer
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
 target_link_libraries(chatServer libmysqlclient.so)
+target_link_libraries(chatServer libhiredis.so)
