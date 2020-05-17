@@ -25,6 +25,7 @@ CMakeFiles/chatServer.dir/sockHandler.c.o: ../database.h
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../errorhandler.h
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../sockHandler.c
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../sockHandler.h
+CMakeFiles/chatServer.dir/sockHandler.c.o: ../sockqueue.h
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../usrData.h
 
 CMakeFiles/chatServer.dir/sockqueue.c.o: ../errorhandler.h

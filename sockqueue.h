@@ -26,6 +26,8 @@ struct sockqueue{
     int close;
 };
 
-struct sockqueue *sockqueue_init(int max_num);
+int sockqueue_init(int max_num);
 
-int sockqueue_add(struct sockqueue* squeue, void *(*callback_handler)(void*arg), void *arg);
+int sockqueue_add(void *(*callback_handler)(void*arg), void *arg);
+
+struct sock *sockqueue_get();

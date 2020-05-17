@@ -10,7 +10,9 @@
 #include "errorhandler.h"
 #include "sockHandler.h"
 #include "database.h"
+#include "sockqueue.h"
 
+////handler注册, 必须对齐指令和回调函数
 void *(*commandSwitch[3])(void*)={sock_signup, sock_signin, sock_talkto};
 
 void msg_save(char *content, size_t len)
@@ -105,7 +107,7 @@ void *sock_signup(void *args)
     id = arg->idindx->cur_num + USR_FST_NUM;
     //注册成功,将id发送给客户端
     char buf[20];
-    sprintf(buf, "%d\n%d\n", SIGNUP, id);
+    sprintf(buf, "%d\n%d\n", CMD_SIGNUP, id);
     if(0 > send(arg->fd, buf, strlen(buf), 0))
     {
         pthread_rwlock_unlock(&(arg->idindx->rwlock));
@@ -122,6 +124,28 @@ void *sock_signup(void *args)
 }
 void *sock_signin(void *args)
 {
+    struct sockHandlerArgs *arg = args;
+    int fd = arg->fd;
+    char buf[100];
+    get_line(fd, buf, sizeof(buf));
+    USRID id = atoi(buf);
+    if(usrData_exists(id) < 0)
+    {
+        ////用户不存在
+        sprintf(buf, "%d\n", CMD_REFUSE);
+        send(fd, buf, strlen(buf), 0);
+        return NULL;
+    }
+    ////用户存在,返回用户信息
+    get_line(fd, buf, sizeof(buf));
+    char **data = db_fetch_usrData(id);
+    if(strcmp(buf, data[1]) == 0)
+    {
+        //连接成功,转发线程应向客户端返回线程启动成功的消息CMD_SIGNIN
+        sockqueue_add(sock_send, &arg);
+    } else {
+        sprintf(buf, "%d\n", CMD_REFUSE);
+    }
 
 }
 void *sock_talkto(void *args)

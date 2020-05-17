@@ -50,7 +50,7 @@ DATABASE *db_getInstance()
 {
     return chat_database_ptr;
 }
-int db_user_sign_up(int id, char *username, char *password)
+int db_user_sign_up(USRID id, char *username, char *password)
 {
     printf("db_user_sign_up\n");
     char query[1024];
@@ -64,4 +64,20 @@ int db_user_sign_up(int id, char *username, char *password)
         error_handler("db_user_sign_up");
     }
     return 0;
+}
+
+char **db_fetch_usrData(USRID id)
+{
+    char **row = NULL;
+//    char ID[20];
+    char query[100];
+//    sprintf(ID, "%d", id);
+//    mysql_real_escape_string(chat_database_ptr, ID, ID, strlen(ID));
+//    sprintf(query, "SELECT username, password from USER where id = %s", ID);
+    sprintf(query, "SELECT username, password from USER where id = %d", id);
+    mysql_real_query(chat_database_ptr, query, sizeof(query));
+    MYSQL_RES *result = mysql_store_result(chat_database_ptr);
+    row = mysql_fetch_row(result);
+    mysql_free_result(result);
+    return row;
 }

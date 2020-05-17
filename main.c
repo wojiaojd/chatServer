@@ -112,10 +112,10 @@ int main()
     usr_data = usrData_init();
 
     /*添加线程池机制*/
-    struct sockqueue *squeue;
-    squeue = sockqueue_init(SOCKQUEUE_MAX_NUM);
+
+    sockqueue_init(SOCKQUEUE_MAX_NUM);
     struct threadpool *pool;
-    pool = threadpool_init(POOL_MAX_NUM, squeue);
+    pool = threadpool_init(POOL_MAX_NUM);
 
     /*添加epoll机制监听事件*/
     int epnum = -1;
@@ -174,7 +174,7 @@ int main()
                  */
                 /*线程池主动工作*/
                 struct sockHandlerArgs arg = {clientsock, usr_data};
-                sockqueue_add(squeue, sock_recv, &arg);
+                sockqueue_add(sock_recv, &arg);
                 /*clientsock*/
             }
             else

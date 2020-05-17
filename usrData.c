@@ -159,6 +159,15 @@ struct id_data *usrData_find(USRID id)
     return usr_data->data[id];
 }
 
+int usrData_exists(USRID id)
+{
+    if(usr_data->data[id] != NULL)
+    {
+        return 0;
+    } else {
+        return -1;
+    }
+}
 redisContext *redis_getInstance()
 {
     if(redisConn != NULL)

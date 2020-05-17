@@ -10,9 +10,11 @@
 #include "usrData.h"
 
 enum COMMAND {
-    SIGNUP = 0,
-    SIGNIN,
-    TALKTO
+    CMD_SIGNUP = 0,
+    CMD_SIGNIN,
+    CMD_TALKTO,
+    CMD_REFUSE,
+    CMD_ACK
 };
 
 struct sockHandlerArgs{

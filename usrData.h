@@ -56,6 +56,7 @@ struct usrData *usrData_init();
 /*用户注册,在用户数据数组中分配一个节点*/
 int usrData_insert(USRID usr_id);
 struct id_data *usrData_find(USRID id);
+int usrData_exists(USRID id);
 
 redisContext *redis_getInstance();
 int redis_newFriend(USRID my_id, USRID friend_id);
