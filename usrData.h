@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <hiredis/hiredis.h>
 
+
 #define MSGQUEUE_MAX_NUM 100
 #define USR_MAX_NUM 10000
 #define USR_FST_NUM 10000  //起始号码
@@ -46,6 +47,7 @@ struct usrData{
 };
 
 struct msg *msg_init();
+int msg_free(struct msg *m);
 
 struct msgqueue *msgqueue_init(int max_num);
 
@@ -57,6 +59,8 @@ struct usrData *usrData_init();
 int usrData_insert(USRID usr_id);
 struct id_data *usrData_find(USRID id);
 int usrData_exists(USRID id);
+int usrData_close(USRID id);
+int usrData_signin(USRID id, int fd);
 
 redisContext *redis_getInstance();
 int redis_newFriend(USRID my_id, USRID friend_id);

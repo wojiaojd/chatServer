@@ -13,13 +13,13 @@ enum COMMAND {
     CMD_SIGNUP = 0,
     CMD_SIGNIN,
     CMD_TALKTO,
-    CMD_REFUSE,
-    CMD_ACK
+    CMD_REFUSE
 };
 
 struct sockHandlerArgs{
     int fd;
     struct usrData *idindx;
+    USRID *id;
 };
 
 void msg_save(char *content, size_t len);

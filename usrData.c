@@ -54,6 +54,15 @@ struct msg *msg_init()
     m->next = NULL;
     return m;
 }
+int msg_free(struct msg *m)
+{
+    if(m == NULL)
+    {
+        return -1;
+    }
+    free(m);
+    return 0;
+}
 
 int usrData_msgqueue_insert(USRID usrid, char *real_msg)
 {
@@ -156,18 +165,59 @@ int usrData_insert(USRID usrid)
 ///通过id查找用户数据
 struct id_data *usrData_find(USRID id)
 {
-    return usr_data->data[id];
+    int index = id - USR_FST_NUM;
+    if(index < 0)
+    {
+        printf("无法找到用户信息..index:%d\n", index);
+        return NULL;
+    } else {
+        return usr_data->data[index];
+    }
+
 }
 
 int usrData_exists(USRID id)
 {
-    if(usr_data->data[id] != NULL)
+    int index = id - USR_FST_NUM;
+    if(index >= 0 && usr_data->data[index] != NULL)
     {
         return 0;
     } else {
         return -1;
     }
 }
+int usrData_close(USRID id)
+{
+    printf("usrData_close\n");
+    struct id_data *data = usrData_find(id);
+    if(data == NULL)
+    {
+        printf("usrData_close data is null\n");
+        return -1;
+    }
+    pthread_mutex_lock(&(data->sndqueue->mutex));
+    data->fd = 0;
+    if(data->sndqueue->close == 1)
+    {
+        pthread_mutex_unlock(&(data->sndqueue->mutex));
+        return -1;
+    }
+    data->sndqueue->close = 1;
+    pthread_cond_signal(&(data->sndqueue->not_empty));
+    pthread_mutex_unlock(&(data->sndqueue->mutex));
+    return 0;
+}
+int usrData_signin(USRID id, int fd)
+{
+    int index = id - USR_FST_NUM;
+    if(index < 0)
+    {
+        return -1;
+    }
+    usr_data->data[index]->fd = fd;
+    return 0;
+}
+
 redisContext *redis_getInstance()
 {
     if(redisConn != NULL)

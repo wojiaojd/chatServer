@@ -5,13 +5,14 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <unistd.h>
 #include "errorhandler.h"
 #include "pthreadpool.h"
 #include "sockHandler.h"
 #include "database.h"
 
 #define EPOLL_SIZE 30
-#define LISTEN_BUF_SIZE 5
+#define LISTEN_BUF_SIZE 3
 #define PORT 9999
 
 
@@ -173,8 +174,11 @@ int main()
                 }
                  */
                 /*线程池主动工作*/
-                struct sockHandlerArgs arg = {clientsock, usr_data};
-                sockqueue_add(sock_recv, &arg);
+                struct sockHandlerArgs *arg = (struct sockHandlerArgs*)calloc(1, sizeof(struct sockHandlerArgs));
+                arg->fd = clientsock;
+                arg->id = 0;
+                arg->idindx = usr_data;
+                sockqueue_add(sock_recv, arg);
                 /*clientsock*/
             }
             else
