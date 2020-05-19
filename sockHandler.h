@@ -19,7 +19,7 @@ enum COMMAND {
 struct sockHandlerArgs{
     int fd;
     struct usrData *idindx;
-    USRID *id;
+    USRID id;
 };
 
 void msg_save(char *content, size_t len);

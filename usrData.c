@@ -68,6 +68,11 @@ int usrData_msgqueue_insert(USRID usrid, char *real_msg)
 {
     assert(real_msg != NULL);
     struct id_data *idData = usrData_find(usrid);
+    if(idData == NULL)
+    {
+        printf("用户不存在\n");
+        return -1;
+    }
     struct msgqueue *snd_queue = idData->sndqueue;
     pthread_mutex_lock(&(snd_queue->mutex));
     while(snd_queue->cur_num == snd_queue->max_num && !snd_queue->close)
@@ -181,9 +186,9 @@ int usrData_exists(USRID id)
     int index = id - USR_FST_NUM;
     if(index >= 0 && usr_data->data[index] != NULL)
     {
-        return 0;
+        return 1;
     } else {
-        return -1;
+        return 0;
     }
 }
 int usrData_close(USRID id)

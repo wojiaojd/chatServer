@@ -72,7 +72,6 @@ int get_line(int fd, char *buf, int len)
 void *sock_recv(void *args)
 {
     struct sockHandlerArgs *arg = args;
-    struct msg *m = NULL;
     int client = arg->fd;
     char buf[10];
     while(1)
@@ -103,20 +102,18 @@ void *sock_send(void *args)
 {
     struct sockHandlerArgs *arg = args;
     char buf[100];
-    printf("用户数据登录操作\n");
     usrData_signin(arg->id, arg->fd);
     ////通知对端连接成功可以继续发送消息
     sprintf(buf, "%d\n", CMD_SIGNIN);
-    printf("登录确认前\n");
     if(0 > send(arg->fd, buf, strlen(buf), 0))
     {
         return NULL;
     }
-    printf("发送登录确认\n");
     struct msg *m = NULL;
     while((m = usrData_msgqueue_pop(arg->id)) != NULL)
     {
         ////转发
+        printf("转发:\n%s\n", m->content);
         send(arg->fd, m->content, strlen(m->content), 0);
         msg_free(m);
     }
@@ -134,7 +131,6 @@ void *sock_signup(void *args)
     ////生成一个新的id,通过现有用户量进行偏移实现.用户名密码的合法性交由客户端判断
     pthread_rwlock_wrlock(&(arg->idindx->rwlock));
     id = arg->idindx->cur_num + USR_FST_NUM;
-    printf("new user id: %d\n", id);
     //注册成功,将id发送给客户端
     char buf[20];
     sprintf(buf, "%d\n%d\n", CMD_SIGNUP, id);
@@ -146,7 +142,6 @@ void *sock_signup(void *args)
         pthread_rwlock_unlock(&(arg->idindx->rwlock));
         get_line(arg->fd, username, sizeof(username));
         get_line(arg->fd, pswd, sizeof(pswd));
-        DATABASE *db = db_getInstance();
         db_user_sign_up(id, username, pswd);
         usrData_insert(id);
     }
@@ -168,9 +163,7 @@ void *sock_signin(void *args)
     }
     ////用户存在,返回用户信息
     get_line(fd, buf, sizeof(buf));
-    printf("获取密码:%s\n", buf);
     char **data = db_fetch_usrData(id);
-    printf("从数据库获取用户数据\n");
     if(strcmp(buf, data[1]) == 0)
     {
         //连接成功,转发线程应向客户端返回线程启动成功的消息CMD_SIGNIN
@@ -180,9 +173,34 @@ void *sock_signin(void *args)
         sprintf(buf, "%d\n", CMD_REFUSE);
         send(fd, buf, strlen(buf), 0);
     }
-
+    return NULL;
 }
 void *sock_talkto(void *args)
 {
-
+    printf("聊天:\n");
+    struct sockHandlerArgs *arg = args;
+    int fd = arg->fd;
+    char sndBuf[1024];
+    char buf[1024];
+    char toId[10];
+    get_line(fd, toId, sizeof(toId));
+    USRID to_id = atoi(toId);
+    if(!usrData_exists(to_id))
+    {
+        ////发送给不存在的用户,要清理socket缓存
+        printf("用户不存在\n");
+    }
+    sprintf(sndBuf, "%d\n%d\n", CMD_TALKTO, arg->id);
+    get_line(fd, buf, sizeof(buf));
+    strcat(sndBuf, "$\n");
+    printf("获取内容\n");
+    do{
+        get_line(fd, buf, sizeof(buf));
+        strcat(sndBuf, buf);
+        strcat(sndBuf, "\n");
+    } while (strcmp(buf, "$"));
+    printf("转发内容:\n%s\n", sndBuf);
+    usrData_msgqueue_insert(to_id, sndBuf);
+    printf("talkto return \n");
+    return NULL;
 }
