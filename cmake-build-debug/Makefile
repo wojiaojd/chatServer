@@ -231,6 +231,33 @@ pthreadpool.c.s:
 	$(MAKE) -f CMakeFiles/chatServer.dir/build.make CMakeFiles/chatServer.dir/pthreadpool.c.s
 .PHONY : pthreadpool.c.s
 
+rbTree.o: rbTree.c.o
+
+.PHONY : rbTree.o
+
+# target to build an object file
+rbTree.c.o:
+	$(MAKE) -f CMakeFiles/chatServer.dir/build.make CMakeFiles/chatServer.dir/rbTree.c.o
+.PHONY : rbTree.c.o
+
+rbTree.i: rbTree.c.i
+
+.PHONY : rbTree.i
+
+# target to preprocess a source file
+rbTree.c.i:
+	$(MAKE) -f CMakeFiles/chatServer.dir/build.make CMakeFiles/chatServer.dir/rbTree.c.i
+.PHONY : rbTree.c.i
+
+rbTree.s: rbTree.c.s
+
+.PHONY : rbTree.s
+
+# target to generate assembly for a file
+rbTree.c.s:
+	$(MAKE) -f CMakeFiles/chatServer.dir/build.make CMakeFiles/chatServer.dir/rbTree.c.s
+.PHONY : rbTree.c.s
+
 sockHandler.o: sockHandler.c.o
 
 .PHONY : sockHandler.o
@@ -333,6 +360,9 @@ help:
 	@echo "... pthreadpool.o"
 	@echo "... pthreadpool.i"
 	@echo "... pthreadpool.s"
+	@echo "... rbTree.o"
+	@echo "... rbTree.i"
+	@echo "... rbTree.s"
 	@echo "... sockHandler.o"
 	@echo "... sockHandler.i"
 	@echo "... sockHandler.s"

@@ -10,6 +10,7 @@
 
 #include <pthread.h>
 #include <hiredis/hiredis.h>
+#include "rbTree.h"
 
 
 #define MSGQUEUE_MAX_NUM 100

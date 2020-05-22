@@ -99,6 +99,12 @@
 		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/pthreadpool.h">
 			<Option target="chatServer"/>
 		</Unit>
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/rbTree.c">
+			<Option target="chatServer"/>
+		</Unit>
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/rbTree.h">
+			<Option target="chatServer"/>
+		</Unit>
 		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/sockHandler.c">
 			<Option target="chatServer"/>
 		</Unit>

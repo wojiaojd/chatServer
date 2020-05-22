@@ -3,6 +3,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/chatServer.dir/errorhandler.c.o"
   "CMakeFiles/chatServer.dir/main.c.o"
   "CMakeFiles/chatServer.dir/pthreadpool.c.o"
+  "CMakeFiles/chatServer.dir/rbTree.c.o"
   "CMakeFiles/chatServer.dir/sockHandler.c.o"
   "CMakeFiles/chatServer.dir/sockqueue.c.o"
   "CMakeFiles/chatServer.dir/usrData.c.o"
