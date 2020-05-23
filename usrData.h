@@ -18,12 +18,12 @@
 #define USR_FST_NUM 10000  //起始号码
 typedef int USRID ;
 
-struct msg{
+typedef struct msg{
     struct msg *next;
     char *content;
-};
+}Msg;
 
-struct msgqueue{
+typedef struct msgqueue{
     struct msg *head;
     struct msg *tail;
     int max_num;
@@ -33,32 +33,34 @@ struct msgqueue{
     pthread_cond_t empty;
     pthread_cond_t not_empty;
     pthread_cond_t not_full;
-};
+}MSGQueue;
 
-struct id_data{
+typedef struct id_data{
     int fd;
     USRID id;
     struct msgqueue *sndqueue;
-};
+}IDData;
 
-struct usrData{
+typedef struct usrData{
     int cur_num;
     pthread_rwlock_t rwlock;
-    struct id_data *data[USR_MAX_NUM];
-};
+    //struct id_data *data[USR_MAX_NUM];
+    RBTree *rbTree;
+}USRData;
 
-struct msg *msg_init();
-int msg_free(struct msg *m);
+Msg *msg_init();
+int msg_free(Msg *m);
 
-struct msgqueue *msgqueue_init(int max_num);
+MSGQueue *msgqueue_init(int max_num);
 
 int usrData_msgqueue_insert(USRID usrid, char *real_msg);
-struct msg *usrData_msgqueue_pop(USRID usrid);
+Msg *usrData_msgqueue_pop(USRID usrid);
 
-struct usrData *usrData_init();
+int my_cmp(void *left_key, void *right_key);
+USRData *usrData_init();
 /*用户注册,在用户数据数组中分配一个节点*/
 int usrData_insert(USRID usr_id);
-struct id_data *usrData_find(USRID id);
+IDData *usrData_find(USRID id);
 int usrData_exists(USRID id);
 int usrData_close(USRID id);
 int usrData_signin(USRID id, int fd);

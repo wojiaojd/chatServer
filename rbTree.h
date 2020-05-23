@@ -38,13 +38,15 @@ static void rbt_left_rotate(RBTree *rbTree, Node *x);
 
 static void rbt_right_rotate(RBTree *rbTree, Node *y);
 
-static int rbt_compare(int (*cmp)(void*, void*), void *left, void *right);
+//static int rbt_compare(int (*cmp)(void*, void*), void *left, void *right);
 
-static void rbt_insert(RBTree *rbTree, Node *node);
+void rbt_insert(RBTree *rbTree, Node *node);
 
 static void rbt_insert_fixup(RBTree *rbTree, Node *node);
 
 void rbt_delete(RBTree *rbTree, Node *node);
 
 static void rbt_delete_fixup(RBTree *rbTree, Node *node, Node *parent);
+
+Node *rbt_new_node();
 

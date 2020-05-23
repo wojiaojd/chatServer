@@ -16,6 +16,8 @@ stdlib.h
 stdio.h
 -
 
+/home/wojiaojd/CLionProjects/chatServer/rbTree.h
+
 /home/wojiaojd/CLionProjects/chatServer/sockHandler.c
 fcntl.h
 -
@@ -50,9 +52,21 @@ usrData.h
 pthread.h
 -
 
+/home/wojiaojd/CLionProjects/chatServer/usrData.c
+stdlib.h
+-
+assert.h
+-
+usrData.h
+/home/wojiaojd/CLionProjects/chatServer/usrData.h
+errorhandler.h
+/home/wojiaojd/CLionProjects/chatServer/errorhandler.h
+
 /home/wojiaojd/CLionProjects/chatServer/usrData.h
 pthread.h
 -
 hiredis/hiredis.h
 -
+rbTree.h
+/home/wojiaojd/CLionProjects/chatServer/rbTree.h
 

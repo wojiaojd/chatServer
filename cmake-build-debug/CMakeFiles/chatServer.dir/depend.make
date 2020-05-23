@@ -12,6 +12,7 @@ CMakeFiles/chatServer.dir/main.c.o: ../database.h
 CMakeFiles/chatServer.dir/main.c.o: ../errorhandler.h
 CMakeFiles/chatServer.dir/main.c.o: ../main.c
 CMakeFiles/chatServer.dir/main.c.o: ../pthreadpool.h
+CMakeFiles/chatServer.dir/main.c.o: ../rbTree.h
 CMakeFiles/chatServer.dir/main.c.o: ../sockHandler.h
 CMakeFiles/chatServer.dir/main.c.o: ../sockqueue.h
 CMakeFiles/chatServer.dir/main.c.o: ../usrData.h
@@ -21,8 +22,12 @@ CMakeFiles/chatServer.dir/pthreadpool.c.o: ../pthreadpool.c
 CMakeFiles/chatServer.dir/pthreadpool.c.o: ../pthreadpool.h
 CMakeFiles/chatServer.dir/pthreadpool.c.o: ../sockqueue.h
 
+CMakeFiles/chatServer.dir/rbTree.c.o: ../rbTree.c
+CMakeFiles/chatServer.dir/rbTree.c.o: ../rbTree.h
+
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../database.h
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../errorhandler.h
+CMakeFiles/chatServer.dir/sockHandler.c.o: ../rbTree.h
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../sockHandler.c
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../sockHandler.h
 CMakeFiles/chatServer.dir/sockHandler.c.o: ../sockqueue.h
@@ -33,6 +38,7 @@ CMakeFiles/chatServer.dir/sockqueue.c.o: ../sockqueue.c
 CMakeFiles/chatServer.dir/sockqueue.c.o: ../sockqueue.h
 
 CMakeFiles/chatServer.dir/usrData.c.o: ../errorhandler.h
+CMakeFiles/chatServer.dir/usrData.c.o: ../rbTree.h
 CMakeFiles/chatServer.dir/usrData.c.o: ../usrData.c
 CMakeFiles/chatServer.dir/usrData.c.o: ../usrData.h
 

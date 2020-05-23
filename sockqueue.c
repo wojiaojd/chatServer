@@ -73,7 +73,7 @@ int sockqueue_add(void *(*callback_handler)(void*arg), void *arg)
         sock_queue->tail = s;
     }
     pthread_mutex_unlock(&(sock_queue->mutex));
-    printf("添加连接\n");
+    //printf("添加连接\n");
     return 0;
 }
 struct sock *sockqueue_get()

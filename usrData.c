@@ -7,14 +7,14 @@
 #include "errorhandler.h"
 
 
-struct usrData *usr_data = NULL;
+USRData *usr_data = NULL;
 ////特别用来保存用户的好友关系
 redisContext *redisConn = NULL;
 
-struct msgqueue *msgqueue_init(int max_num)
+MSGQueue *msgqueue_init(int max_num)
 {
-    struct msgqueue *msg_queue = NULL;
-    msg_queue = (struct msgqueue*)calloc(1, sizeof(struct msgqueue));
+    MSGQueue *msg_queue = NULL;
+    msg_queue = (MSGQueue*)calloc(1, sizeof(MSGQueue));
     if(!msg_queue)
     {
         error_handler("msg_queue_calloc");
@@ -42,10 +42,10 @@ struct msgqueue *msgqueue_init(int max_num)
     return msg_queue;
 }
 
-struct msg *msg_init()
+Msg *msg_init()
 {
-    struct msg *m = NULL;
-    m = (struct msg*)calloc(1, sizeof(struct msg));
+    Msg *m = NULL;
+    m = (Msg*)calloc(1, sizeof(Msg));
     if(!m)
     {
         error_handler("msg_init_calloc");
@@ -54,7 +54,7 @@ struct msg *msg_init()
     m->next = NULL;
     return m;
 }
-int msg_free(struct msg *m)
+int msg_free(Msg *m)
 {
     if(m == NULL)
     {
@@ -67,13 +67,14 @@ int msg_free(struct msg *m)
 int usrData_msgqueue_insert(USRID usrid, char *real_msg)
 {
     assert(real_msg != NULL);
-    struct id_data *idData = usrData_find(usrid);
+    printf("msg insert %d\n", usrid);
+    IDData *idData = usrData_find(usrid);
     if(idData == NULL)
     {
         printf("用户不存在\n");
         return -1;
     }
-    struct msgqueue *snd_queue = idData->sndqueue;
+    MSGQueue *snd_queue = idData->sndqueue;
     pthread_mutex_lock(&(snd_queue->mutex));
     while(snd_queue->cur_num == snd_queue->max_num && !snd_queue->close)
     {
@@ -84,7 +85,7 @@ int usrData_msgqueue_insert(USRID usrid, char *real_msg)
         pthread_mutex_unlock(&(snd_queue->mutex));
         return -1;
     }
-    struct msg *m;
+    Msg *m;
     m = msg_init();
     m->content = real_msg;
     snd_queue->cur_num++;
@@ -101,11 +102,11 @@ int usrData_msgqueue_insert(USRID usrid, char *real_msg)
     return 0;
 }
 //取出头节点
-struct msg *usrData_msgqueue_pop(USRID usrid)
+Msg *usrData_msgqueue_pop(USRID usrid)
 {
-    struct msg *m = NULL;
-    struct id_data *idData = usrData_find(usrid);
-    struct msgqueue *snd_queue = idData->sndqueue;
+    Msg *m = NULL;
+    IDData *idData = usrData_find(usrid);
+    MSGQueue *snd_queue = idData->sndqueue;
     pthread_mutex_lock(&(snd_queue->mutex));
     while(snd_queue->cur_num == 0 && !snd_queue->close)
     {
@@ -132,17 +133,27 @@ struct msg *usrData_msgqueue_pop(USRID usrid)
     return m;
 }
 
-struct usrData *usrData_init()
+int my_cmp(void *left_key, void *right_key)
+{
+    USRID *l = left_key;
+    int *r = right_key;
+    if(*l < *r)
+        return -1;
+    else if(*l > *r)
+        return 1;
+    else
+        return 0;
+}
+
+USRData *usrData_init()
 {
     if(usr_data != NULL)
     {
         return usr_data;
     }
-    usr_data = (struct usrData*)calloc(1, sizeof(struct usrData));
-    for(int i = 0; i < USR_MAX_NUM; i++)
-    {
-        usr_data->data[i] = NULL;
-    }
+    usr_data = (USRData *)calloc(1, sizeof(USRData));
+    usr_data->rbTree = calloc(1, sizeof(RBTree));
+    usr_data->rbTree->cmp = my_cmp;
     if(pthread_rwlock_init(&(usr_data->rwlock), NULL))
     {
         error_handler("usrDataArray_mutex_r_init");
@@ -154,47 +165,52 @@ struct usrData *usrData_init()
 ///用户数据结构或可改进,比如改成红黑树
 int usrData_insert(USRID usrid)
 {
-    struct id_data *idData = NULL;
-    idData = calloc(1, sizeof(struct id_data));
+    IDData *idData = NULL;
+    idData = calloc(1, sizeof(IDData));
     idData->id = usrid;
     idData->fd = 0;
     idData->sndqueue = msgqueue_init(MSGQUEUE_MAX_NUM);
-    USRID index = usrid - USR_FST_NUM;
-    if(usr_data->data[index] != NULL)
-    {
-        return -1;
-    }
-    usr_data->data[index] = idData;
+
+    Node *node = rbt_new_node();
+    node->key = calloc(1, sizeof(USRID));
+    *(USRID*)node->key = usrid;
+    node->value = idData;
+    rbt_insert(usr_data->rbTree, node);
     return 0;
 }
 ///通过id查找用户数据
-struct id_data *usrData_find(USRID id)
+IDData *usrData_find(USRID id)
 {
-    int index = id - USR_FST_NUM;
-    if(index < 0)
+    Node *p = NULL;
+    p = usr_data->rbTree->root;
+    int (*compare)(void*, void*);
+    compare = usr_data->rbTree->cmp;
+    void *pId = &id;
+    while(p)
     {
-        printf("无法找到用户信息..index:%d\n", index);
-        return NULL;
-    } else {
-        return usr_data->data[index];
+        int res = (*compare)(pId, p->key);
+        if(res < 0)
+            p = p->left;
+        else if(res > 0)
+            p = p->right;
+        else
+            break;
     }
-
+    return p != NULL ? p->value : NULL;
 }
 
 int usrData_exists(USRID id)
 {
-    int index = id - USR_FST_NUM;
-    if(index >= 0 && usr_data->data[index] != NULL)
-    {
+    IDData *temp = usrData_find(id);
+    if(temp)
         return 1;
-    } else {
+    else
         return 0;
-    }
 }
 int usrData_close(USRID id)
 {
     printf("usrData_close\n");
-    struct id_data *data = usrData_find(id);
+    IDData *data = usrData_find(id);
     if(data == NULL)
     {
         printf("usrData_close data is null\n");
@@ -214,12 +230,11 @@ int usrData_close(USRID id)
 }
 int usrData_signin(USRID id, int fd)
 {
-    int index = id - USR_FST_NUM;
-    if(index < 0)
-    {
+    IDData *id_data;
+    id_data = usrData_find(id);
+    if(!id_data)
         return -1;
-    }
-    usr_data->data[index]->fd = fd;
+    id_data->fd = fd;
     return 0;
 }
 

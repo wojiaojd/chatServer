@@ -16,11 +16,11 @@ enum COMMAND {
     CMD_REFUSE
 };
 
-struct sockHandlerArgs{
+typedef struct sock_handler_args{
     int fd;
-    struct usrData *idindx;
+    USRData *idindx;
     USRID id;
-};
+}SockHandlerArgs;
 
 void msg_save(char *content, size_t len);
 int get_line(int fd, char *buf, int len);

@@ -71,7 +71,7 @@ int get_line(int fd, char *buf, int len)
 /*这是接收用户发来的请求,如果是转发请求,则把消息挂到id索引数据结构的转发队列中*/
 void *sock_recv(void *args)
 {
-    struct sockHandlerArgs *arg = args;
+    SockHandlerArgs *arg = args;
     int client = arg->fd;
     char buf[10];
     while(1)
@@ -79,6 +79,7 @@ void *sock_recv(void *args)
         int len = get_line(client, buf, sizeof(buf));
         if(len > 0) {
             enum COMMAND command = atoi(buf);
+            printf("COMMAND:%d\n", command);
             (*(commandSwitch[command]))(args);
 
         } else if(len == 0){
@@ -100,7 +101,7 @@ void *sock_recv(void *args)
 }
 void *sock_send(void *args)
 {
-    struct sockHandlerArgs *arg = args;
+    SockHandlerArgs *arg = args;
     char buf[100];
     usrData_signin(arg->id, arg->fd);
     ////通知对端连接成功可以继续发送消息
@@ -109,7 +110,7 @@ void *sock_send(void *args)
     {
         return NULL;
     }
-    struct msg *m = NULL;
+    Msg *m = NULL;
     while((m = usrData_msgqueue_pop(arg->id)) != NULL)
     {
         ////转发
@@ -123,7 +124,7 @@ void *sock_send(void *args)
 /*用户注册过程*/
 void *sock_signup(void *args)
 {
-    struct sockHandlerArgs *arg = args;
+    SockHandlerArgs *arg = args;
     USRID id;
     //避免mysql_real_escape_string过程中全部都是需转义的字符,长度应为2*n+1
     char username[101];
@@ -138,6 +139,7 @@ void *sock_signup(void *args)
     {
         pthread_rwlock_unlock(&(arg->idindx->rwlock));
     } else {
+
         arg->idindx->cur_num++;
         pthread_rwlock_unlock(&(arg->idindx->rwlock));
         get_line(arg->fd, username, sizeof(username));
@@ -149,7 +151,7 @@ void *sock_signup(void *args)
 }
 void *sock_signin(void *args)
 {
-    struct sockHandlerArgs *arg = args;
+    SockHandlerArgs *arg = args;
     int fd = arg->fd;
     char buf[100];
     get_line(fd, buf, sizeof(buf));
@@ -178,29 +180,34 @@ void *sock_signin(void *args)
 void *sock_talkto(void *args)
 {
     printf("聊天:\n");
-    struct sockHandlerArgs *arg = args;
+    SockHandlerArgs *arg = args;
     int fd = arg->fd;
     char sndBuf[1024];
     char buf[1024];
     char toId[10];
     get_line(fd, toId, sizeof(toId));
     USRID to_id = atoi(toId);
-    if(!usrData_exists(to_id))
-    {
-        ////发送给不存在的用户,要清理socket缓存
-        printf("用户不存在\n");
-    }
+
     sprintf(sndBuf, "%d\n%d\n", CMD_TALKTO, arg->id);
     get_line(fd, buf, sizeof(buf));
     strcat(sndBuf, "$\n");
-    printf("获取内容\n");
     do{
         get_line(fd, buf, sizeof(buf));
         strcat(sndBuf, buf);
         strcat(sndBuf, "\n");
     } while (strcmp(buf, "$"));
-    printf("转发内容:\n%s\n", sndBuf);
-    usrData_msgqueue_insert(to_id, sndBuf);
+
+    if(!usrData_exists(to_id))
+    {
+        ////to do sth. when user not exists
+        printf("用户不存在\n");
+
+    } else
+    {
+        printf("转发内容:\n%s\n", sndBuf);
+        usrData_msgqueue_insert(to_id, sndBuf);
+    }
+
     printf("talkto return \n");
     return NULL;
 }

@@ -50,15 +50,15 @@ static void rbt_right_rotate(RBTree *rbTree, Node *y)
     y->parent = x;
 }
 
-static int rbt_compare(int (*cmp)(void*, void*), void *left, void *right)
-{
-    if(!cmp)
-        return (int)(left < right);
-    else
-        return (*cmp)(left, right);
-}
+//static int rbt_compare(int (*cmp)(void*, void*), void *left, void *right)
+//{
+//    if(!cmp)
+//        return (int)(left < right);
+//    else
+//        return (*cmp)(left, right);
+//}
 
-static void rbt_insert(RBTree *rbTree, Node *node)
+void rbt_insert(RBTree *rbTree, Node *node)
 {
     Node *y = NULL;
     Node *x = rbTree->root;
@@ -68,7 +68,7 @@ static void rbt_insert(RBTree *rbTree, Node *node)
         if(rbTree->cmp)
         {
             //自定义了键值比较函数
-            if(rbt_compare(rbTree->cmp, node->key, x->key))
+            if((*(rbTree->cmp))(node->key, x->key) < 0)
                 x = x->left;
             else
                 x = x->right;
@@ -79,14 +79,13 @@ static void rbt_insert(RBTree *rbTree, Node *node)
             else
                 x = x->right;
         }
-
     }
     rbt_parent(node) = y;
     if(y != NULL)
     {
         if(rbTree->cmp)
         {
-            if(rbt_compare(rbTree->cmp, node->key, y->key))
+            if((*rbTree->cmp)(node->key, y->key) < 0)
                 y->left = node;
             else
                 y->right = node;
@@ -317,4 +316,17 @@ static void rbt_delete_fixup(RBTree *rbTree, Node *node, Node *parent)
     }
     if(node)
         rbt_set_black(node);
+}
+
+Node *rbt_new_node()
+{
+    Node *node;
+    node = calloc(1, sizeof(Node));
+    node->left = NULL;
+    node->right = NULL;
+    node->parent = NULL;
+    node->key = NULL;
+    node->value = NULL;
+    node->color = RED;
+    return node;
 }

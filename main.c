@@ -174,7 +174,7 @@ int main()
                 }
                  */
                 /*线程池主动工作*/
-                struct sockHandlerArgs *arg = (struct sockHandlerArgs*)calloc(1, sizeof(struct sockHandlerArgs));
+                SockHandlerArgs *arg = (SockHandlerArgs*)calloc(1, sizeof(SockHandlerArgs));
                 arg->fd = clientsock;
                 arg->id = 0;
                 arg->idindx = usr_data;
