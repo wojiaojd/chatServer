@@ -136,7 +136,7 @@ Msg *usrData_msgqueue_pop(USRID usrid)
 int my_cmp(void *left_key, void *right_key)
 {
     USRID *l = left_key;
-    int *r = right_key;
+    USRID *r = right_key;
     if(*l < *r)
         return -1;
     else if(*l > *r)
@@ -175,20 +175,24 @@ int usrData_insert(USRID usrid)
     node->key = calloc(1, sizeof(USRID));
     *(USRID*)node->key = usrid;
     node->value = idData;
+    pthread_rwlock_wrlock(&(usr_data->rwlock));
     rbt_insert(usr_data->rbTree, node);
+    pthread_rwlock_unlock(&(usr_data->rwlock));
     return 0;
 }
 ///通过id查找用户数据
 IDData *usrData_find(USRID id)
 {
     Node *p = NULL;
+    pthread_rwlock_rdlock(&(usr_data->rwlock));
     p = rbt_find(usr_data->rbTree, &id);
+    pthread_rwlock_unlock(&(usr_data->rwlock));
     return p != NULL ? p->value : NULL;
 }
 
 int usrData_exists(USRID id)
 {
-    Node *temp = rbt_find(usr_data->rbTree, &id);
+    IDData *temp = usrData_find(id);
     if(temp)
         return 1;
     else
