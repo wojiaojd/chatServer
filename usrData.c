@@ -182,26 +182,13 @@ int usrData_insert(USRID usrid)
 IDData *usrData_find(USRID id)
 {
     Node *p = NULL;
-    p = usr_data->rbTree->root;
-    int (*compare)(void*, void*);
-    compare = usr_data->rbTree->cmp;
-    void *pId = &id;
-    while(p)
-    {
-        int res = (*compare)(pId, p->key);
-        if(res < 0)
-            p = p->left;
-        else if(res > 0)
-            p = p->right;
-        else
-            break;
-    }
+    p = rbt_find(usr_data->rbTree, &id);
     return p != NULL ? p->value : NULL;
 }
 
 int usrData_exists(USRID id)
 {
-    IDData *temp = usrData_find(id);
+    Node *temp = rbt_find(usr_data->rbTree, &id);
     if(temp)
         return 1;
     else

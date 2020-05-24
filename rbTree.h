@@ -50,3 +50,5 @@ static void rbt_delete_fixup(RBTree *rbTree, Node *node, Node *parent);
 
 Node *rbt_new_node();
 
+Node *rbt_find(RBTree *rbTree, void *key);
+

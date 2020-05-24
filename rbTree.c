@@ -1,8 +1,8 @@
 //
 // Created by wojiaojd on 22/5/2020.
 //
-#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "rbTree.h"
 
 static void rbt_left_rotate(RBTree *rbTree, Node *x)
@@ -74,7 +74,7 @@ void rbt_insert(RBTree *rbTree, Node *node)
                 x = x->right;
         } else {
             //默认键值比较函数
-            if(*((char*)node->key) < *((char*)x->key))
+            if(strcmp((char*)node->key, y->key) < 0)
                 x = x->left;
             else
                 x = x->right;
@@ -90,7 +90,7 @@ void rbt_insert(RBTree *rbTree, Node *node)
             else
                 y->right = node;
         } else {
-            if(*((char*)node->key) < *((char*)y->key))
+            if(strcmp((char*)node->key, y->key) < 0)
                 y->left = node;
             else
                 y->right = node;
@@ -329,4 +329,26 @@ Node *rbt_new_node()
     node->value = NULL;
     node->color = RED;
     return node;
+}
+
+Node *rbt_find(RBTree *rbTree, void *key)
+{
+    Node *res = NULL;
+    res = rbTree->root;
+    while(res)
+    {
+        int c;
+        if(rbTree->cmp)
+            c = (*rbTree->cmp)(res->key, key);
+        else
+            c = strcmp((char*)res->key, (char*)key);
+
+        if(c > 0)
+            res = res->left;
+        else if(c < 0)
+            res = res->right;
+        else
+            break;
+    }
+    return res;
 }
