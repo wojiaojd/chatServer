@@ -111,7 +111,8 @@ int main()
     /*用户id索引数据数据结构*/
     struct usrData *usr_data;
     usr_data = usrData_init();
-
+    /*sockHandler全局结构cmdSwitch*/
+    cmd_switch_init();
     /*添加线程池机制*/
 
     sockqueue_init(SOCKQUEUE_MAX_NUM);

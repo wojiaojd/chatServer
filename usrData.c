@@ -177,6 +177,7 @@ int usrData_insert(USRID usrid)
     node->value = idData;
     pthread_rwlock_wrlock(&(usr_data->rwlock));
     rbt_insert(usr_data->rbTree, node);
+    usr_data->cur_num++;
     pthread_rwlock_unlock(&(usr_data->rwlock));
     return 0;
 }
@@ -241,4 +242,23 @@ redisContext *redis_getInstance()
         return NULL;
     }
     return redisConn;
+}
+int redis_newFriend(USRID my_id, USRID friend_id)
+{
+    redisContext *conn = redis_getInstance();
+    char command[100];
+
+    sprintf(command, "sadd %d_friends %d", my_id, friend_id);
+    if(NULL == redisCommand(conn, command))
+    {
+        return -1;
+    }
+
+    sprintf(command, "sadd %d_friends %d", friend_id, my_id);
+    if(NULL == redisCommand(conn, command))
+    {
+        return -1;
+    }
+
+    return 0;
 }

@@ -14,8 +14,35 @@
 #include "errorhandler.h"
 
 ////handler注册, 必须对齐指令和回调函数
-void *(*commandSwitch[3])(void*)={sock_signup, sock_signin, sock_talkto};
+//void *(*commandSwitch[3])(void*)={sock_signup, sock_signin, sock_talkto};
+CMDSwitch *cmdSwitch = NULL;
+void cmd_switch_init()
+{
+    cmdSwitch = calloc(1, sizeof(CMDSwitch));
+    cmdSwitch->rbTree = calloc(1, sizeof(RBTree));
 
+    cmd_register(CMD_SIGNUP, sock_signup);
+    cmd_register(CMD_SIGNIN, sock_signin);
+    cmd_register(CMD_TALKTO, sock_talkto);
+    cmd_register(CMD_NEWFND, sock_newfriend);
+
+}
+void cmd_register(enum COMMAND cmd, void*(*handler)(void*))
+{
+    Node *newHandler = rbt_new_node();
+    newHandler->key = calloc(1, sizeof(int));
+    *((int*)newHandler->key) = cmd;
+    newHandler->value = handler;
+    rbt_insert(cmdSwitch->rbTree, newHandler);
+}
+void cmd_switch(enum COMMAND cmd, void *args)
+{
+    Node *handlerNode = rbt_find(cmdSwitch->rbTree, &cmd);
+    printf("cmd:%d\n", *(int*)handlerNode->key);
+    void*(*handler)(void*);
+    handler = handlerNode->value;
+    (*handler)(args);
+}
 void msg_save(char *content, size_t len)
 {
     char pathname[255];
@@ -80,7 +107,8 @@ void *sock_recv(void *args)
         if(len > 0) {
             enum COMMAND command = atoi(buf);
             printf("COMMAND:%d\n", command);
-            (*(commandSwitch[command]))(args);
+//            (*(commandSwitch[command]))(args);
+            cmd_switch(command, args);
 
         } else if(len == 0){
             /*释放资源*/
@@ -209,5 +237,49 @@ void *sock_talkto(void *args)
     }
 
     printf("talkto return \n");
+    return NULL;
+}
+void *sock_newfriend(void *args)
+{
+    printf("添加好友\n");
+    SockHandlerArgs *arg;
+    int fd;
+    char sendbuf[1024];
+    char buf[1024];
+    int cmd;
+    USRID sender_id, recver_id;
+
+    arg = args;
+    fd = arg->fd;
+    get_line(fd, buf, sizeof(buf));
+    cmd = atoi(buf);
+    get_line(fd, buf, sizeof(buf));
+    sender_id = atoi(buf);
+    get_line(fd, buf, sizeof(buf));
+    recver_id = atoi(buf);
+
+    sprintf(sendbuf, "%d\n%d\n%d\n%d\n", CMD_NEWFND, cmd, sender_id, recver_id);
+    strcat(sendbuf, "$\n");
+    do{
+        get_line(fd, buf, sizeof(buf));
+        strcat(sendbuf, buf);
+        strcat(sendbuf, "\n");
+    } while (strcmp(buf, "$"));
+
+    if(!usrData_exists(recver_id))
+    {
+        printf("用户不存在\n");
+        return NULL;
+    }
+
+    if(cmd == CMD_CONFIRM)
+    {
+        if(0 != redis_newFriend(sender_id, recver_id))
+            printf("redis new friend fail");
+        return NULL;
+    }
+
+    usrData_msgqueue_insert(recver_id, sendbuf);
+    printf("newfnd return\n");
     return NULL;
 }

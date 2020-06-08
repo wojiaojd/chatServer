@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/home/wojiaojd/CLionProjects/chatServer/database.h
+mysql/mysql.h
+-
+
 /home/wojiaojd/CLionProjects/chatServer/errorhandler.h
 stdlib.h
 -
@@ -14,15 +18,39 @@ stdio.h
 
 /home/wojiaojd/CLionProjects/chatServer/rbTree.h
 
-/home/wojiaojd/CLionProjects/chatServer/usrData.c
+/home/wojiaojd/CLionProjects/chatServer/sockHandler.c
+fcntl.h
+-
+unistd.h
+-
+sys/socket.h
+-
+string.h
+-
 stdlib.h
 -
-assert.h
+stdio.h
+-
+errorhandler.h
+/home/wojiaojd/CLionProjects/chatServer/errorhandler.h
+sockHandler.h
+/home/wojiaojd/CLionProjects/chatServer/sockHandler.h
+database.h
+/home/wojiaojd/CLionProjects/chatServer/database.h
+sockqueue.h
+/home/wojiaojd/CLionProjects/chatServer/sockqueue.h
+errorhandler.h
+/home/wojiaojd/CLionProjects/chatServer/errorhandler.h
+
+/home/wojiaojd/CLionProjects/chatServer/sockHandler.h
+sys/types.h
 -
 usrData.h
 /home/wojiaojd/CLionProjects/chatServer/usrData.h
-errorhandler.h
-/home/wojiaojd/CLionProjects/chatServer/errorhandler.h
+
+/home/wojiaojd/CLionProjects/chatServer/sockqueue.h
+pthread.h
+-
 
 /home/wojiaojd/CLionProjects/chatServer/usrData.h
 pthread.h

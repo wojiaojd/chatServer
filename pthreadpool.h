@@ -9,7 +9,7 @@
 
 #include <pthread.h>
 #include "sockqueue.h"
-#define POOL_MAX_NUM 4
+#define POOL_MAX_NUM 20
 
 struct threadpool{
     int thread_num;
