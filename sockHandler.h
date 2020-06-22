@@ -16,7 +16,10 @@ enum COMMAND {
     CMD_REFUSE,
     CMD_NEWFND,
     CMD_REQUEST,
-    CMD_CONFIRM
+    CMD_CONFIRM,
+    CMD_USRINFO,
+    CMD_BRIEF,
+    CMD_DETAIL
 
 };
 
@@ -41,6 +44,7 @@ void *sock_signup(void *args);
 void *sock_signin(void *args);
 void *sock_talkto(void *args);
 void *sock_newfriend(void *args);
+void *sock_getUsrInfo(void *args);
 
 #endif //CHATSERVER_SOCKHANDLER_H
 

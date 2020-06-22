@@ -25,6 +25,7 @@ void cmd_switch_init()
     cmd_register(CMD_SIGNIN, sock_signin);
     cmd_register(CMD_TALKTO, sock_talkto);
     cmd_register(CMD_NEWFND, sock_newfriend);
+    cmd_register(CMD_USRINFO, sock_getUsrInfo);
 
 }
 void cmd_register(enum COMMAND cmd, void*(*handler)(void*))
@@ -167,8 +168,6 @@ void *sock_signup(void *args)
     {
         pthread_rwlock_unlock(&(arg->idindx->rwlock));
     } else {
-
-        arg->idindx->cur_num++;
         pthread_rwlock_unlock(&(arg->idindx->rwlock));
         get_line(arg->fd, username, sizeof(username));
         get_line(arg->fd, pswd, sizeof(pswd));
@@ -193,7 +192,7 @@ void *sock_signin(void *args)
     }
     ////用户存在,返回用户信息
     get_line(fd, buf, sizeof(buf));
-    char **data = db_fetch_usrData(id);
+    char **data = db_fetch_signinUsrData(id);
     if(strcmp(buf, data[1]) == 0)
     {
         //连接成功,转发线程应向客户端返回线程启动成功的消息CMD_SIGNIN
@@ -282,4 +281,38 @@ void *sock_newfriend(void *args)
     usrData_msgqueue_insert(recver_id, sendbuf);
     printf("newfnd return\n");
     return NULL;
+}
+void *sock_getUsrInfo(void *args)
+{
+    printf("获取用户信息\n");
+    SockHandlerArgs *arg = args;
+    char sendbuf[1024];
+    char buf[20];
+    int cmd;
+    USRID sender_id, request_id;
+
+    sprintf(sendbuf, "%d\n", CMD_USRINFO);
+    get_line(arg->fd, buf, sizeof(buf));
+    strcat(sendbuf, buf);
+    strcat(sendbuf, "\n$\n");
+
+    cmd = atoi(buf);
+    get_line(arg->fd, buf, sizeof(buf));
+    sender_id = atoi(buf);
+    get_line(arg->fd, buf,sizeof(buf));
+    request_id = atoi(buf);
+
+    if(cmd == CMD_BRIEF)
+    {
+        char **info;
+        info = db_fetch_briefUsrData(request_id);
+        strcat(sendbuf, info[0]);
+        strcat(sendbuf, "\n");
+        strcat(sendbuf, info[1]);
+        strcat(sendbuf, "\n$\n");
+        printf("senderId:%d\n", sender_id);
+        usrData_msgqueue_insert(sender_id, sendbuf);
+        printf("请求用户数据：\n%s", sendbuf);
+    }
+
 }

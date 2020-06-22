@@ -71,15 +71,30 @@ int db_user_sign_up(int id, char *username, char *password)
     return 0;
 }
 
-char **db_fetch_usrData(int id)
+char **db_fetch_signinUsrData(int id)
 {
     MYSQL_ROW row = NULL;
 //    char ID[20];
     char query[100];
-//    sprintf(ID, "%d", id);
-//    mysql_real_escape_string(chat_database_ptr, ID, ID, strlen(ID));
-//    sprintf(query, "SELECT username, password from USER where id = %s", ID);
     sprintf(query, "SELECT username, password from USER where id = %d", id);
+    pthread_mutex_lock(&(db_mutex));
+    if(mysql_real_query(chat_database_ptr, query, strlen(query)))
+    {
+        pthread_mutex_unlock(&(db_mutex));
+        error_handler("select query false");
+    }
+    MYSQL_RES *result = mysql_store_result(chat_database_ptr);
+    row = mysql_fetch_row(result);
+    mysql_free_result(result);
+    pthread_mutex_unlock(&(db_mutex));
+    return row;
+}
+char **db_fetch_briefUsrData(int id)
+{
+    MYSQL_ROW row = NULL;
+//    char ID[20];
+    char query[200];
+    sprintf(query, "SELECT id, username from USER where id = %d", id);
     pthread_mutex_lock(&(db_mutex));
     if(mysql_real_query(chat_database_ptr, query, strlen(query)))
     {

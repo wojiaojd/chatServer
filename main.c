@@ -13,7 +13,7 @@
 
 #define EPOLL_SIZE 30
 #define LISTEN_BUF_SIZE 3
-#define PORT 9999
+#define PORT 9998
 
 
 void *sock_handler(void *ev);

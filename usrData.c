@@ -227,6 +227,7 @@ int usrData_signin(USRID id, int fd)
     if(!id_data)
         return -1;
     id_data->fd = fd;
+    id_data->sndqueue->close = 0;
     return 0;
 }
 
