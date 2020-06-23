@@ -64,7 +64,7 @@ int msg_free(Msg *m)
     return 0;
 }
 
-int usrData_msgqueue_insert(USRID usrid, char *real_msg)
+int usrData_msgqueue_insert(USRID usrid, const char *real_msg)
 {
     assert(real_msg != NULL);
     printf("msg insert %d\n", usrid);

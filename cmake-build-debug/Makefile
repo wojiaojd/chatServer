@@ -48,10 +48,10 @@ RM = /home/wojiaojd/下载/clion-2020.1.1/bin/cmake/linux/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/wojiaojd/CLionProjects/chatServer/chatServer
+CMAKE_SOURCE_DIR = /home/wojiaojd/CLionProjects/chatServer
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug
+CMAKE_BINARY_DIR = /home/wojiaojd/CLionProjects/chatServer/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/CMakeFiles /home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles /home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -285,6 +285,33 @@ sockHandler.c.s:
 	$(MAKE) -f CMakeFiles/chatServer.dir/build.make CMakeFiles/chatServer.dir/sockHandler.c.s
 .PHONY : sockHandler.c.s
 
+sockPackage.o: sockPackage.c.o
+
+.PHONY : sockPackage.o
+
+# target to build an object file
+sockPackage.c.o:
+	$(MAKE) -f CMakeFiles/chatServer.dir/build.make CMakeFiles/chatServer.dir/sockPackage.c.o
+.PHONY : sockPackage.c.o
+
+sockPackage.i: sockPackage.c.i
+
+.PHONY : sockPackage.i
+
+# target to preprocess a source file
+sockPackage.c.i:
+	$(MAKE) -f CMakeFiles/chatServer.dir/build.make CMakeFiles/chatServer.dir/sockPackage.c.i
+.PHONY : sockPackage.c.i
+
+sockPackage.s: sockPackage.c.s
+
+.PHONY : sockPackage.s
+
+# target to generate assembly for a file
+sockPackage.c.s:
+	$(MAKE) -f CMakeFiles/chatServer.dir/build.make CMakeFiles/chatServer.dir/sockPackage.c.s
+.PHONY : sockPackage.c.s
+
 sockqueue.o: sockqueue.c.o
 
 .PHONY : sockqueue.o
@@ -366,6 +393,9 @@ help:
 	@echo "... sockHandler.o"
 	@echo "... sockHandler.i"
 	@echo "... sockHandler.s"
+	@echo "... sockPackage.o"
+	@echo "... sockPackage.i"
+	@echo "... sockPackage.s"
 	@echo "... sockqueue.o"
 	@echo "... sockqueue.i"
 	@echo "... sockqueue.s"

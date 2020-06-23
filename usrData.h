@@ -6,8 +6,6 @@
 #ifndef CHATSERVER_IDINDEXING_H
 #define CHATSERVER_IDINDEXING_H
 
-#endif //CHATSERVER_IDINDEXING_H
-
 #include <pthread.h>
 #include <hiredis/hiredis.h>
 #include "rbTree.h"
@@ -20,7 +18,7 @@ typedef int USRID ;
 
 typedef struct msg{
     struct msg *next;
-    char *content;
+    const char *content;
 }Msg;
 
 typedef struct msgqueue{
@@ -53,7 +51,7 @@ int msg_free(Msg *m);
 
 MSGQueue *msgqueue_init(int max_num);
 
-int usrData_msgqueue_insert(USRID usrid, char *real_msg);
+int usrData_msgqueue_insert(USRID usrid, const char *real_msg);
 Msg *usrData_msgqueue_pop(USRID usrid);
 
 int my_cmp(void *left_key, void *right_key);
@@ -67,3 +65,5 @@ int usrData_signin(USRID id, int fd);
 
 redisContext *redis_getInstance();
 int redis_newFriend(USRID my_id, USRID friend_id);
+
+#endif //CHATSERVER_IDINDEXING_H

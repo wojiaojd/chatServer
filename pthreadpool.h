@@ -5,7 +5,7 @@
 #ifndef CHATSERVER_PTHREADPOLL_H
 #define CHATSERVER_PTHREADPOLL_H
 
-#endif //CHATSERVER_PTHREADPOLL_H
+
 
 #include <pthread.h>
 #include "sockqueue.h"
@@ -22,3 +22,5 @@ struct threadpool *threadpool_init(int thread_num);
 ////抽象工作线程
 void *threadpool_run(void *arg);
 ////线程池的扩展动作
+
+#endif //CHATSERVER_PTHREADPOLL_H

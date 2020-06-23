@@ -74,6 +74,7 @@ void msg_save(char *content, size_t len)
 
     close(fd);
 }
+////行末无回车
 int get_line(int fd, char *buf, int len)
 {
     int i = 0;
@@ -104,14 +105,12 @@ void *sock_recv(void *args)
     char buf[10];
     while(1)
     {
-        int len = get_line(client, buf, sizeof(buf));
-        if(len > 0) {
-            enum COMMAND command = atoi(buf);
-            printf("COMMAND:%d\n", command);
-//            (*(commandSwitch[command]))(args);
-            cmd_switch(command, args);
+        SockPackage *package = sock_read_package(arg);
+        if(package != NULL) {
+            printf("COMMAND:%d\n", package->cmd_0);
+            cmd_switch(package->cmd_0, arg);
 
-        } else if(len == 0){
+        } else if(package == NULL){
             /*释放资源*/
             /*------*/
             printf("usrData_close fd:%d id:%d\n", arg->fd, arg->id);
@@ -123,8 +122,6 @@ void *sock_recv(void *args)
             close(client);
             free(arg);
             return NULL;
-        } else {
-            error_handler("recv");
         }
     }
 }
@@ -132,13 +129,20 @@ void *sock_send(void *args)
 {
     SockHandlerArgs *arg = args;
     char buf[100];
+    ////用户登录
     usrData_signin(arg->id, arg->fd);
     ////通知对端连接成功可以继续发送消息
     sprintf(buf, "%d\n", CMD_SIGNIN);
-    if(0 > send(arg->fd, buf, strlen(buf), 0))
+    arg->package->cmd_0 = CMD_SIGNIN;
+    arg->package->cmd_1 = CMD_CONFIRM;
+    arg->package->sender = 0;
+    arg->package->recver = arg->id;
+    sock_package_removeOtherMsg(arg->package);
+    if(0 > sock_write_package(arg))
     {
         return NULL;
     }
+    //提取发送节点,发送的是原始数据(协议)
     Msg *m = NULL;
     while((m = usrData_msgqueue_pop(arg->id)) != NULL)
     {
@@ -158,20 +162,36 @@ void *sock_signup(void *args)
     //避免mysql_real_escape_string过程中全部都是需转义的字符,长度应为2*n+1
     char username[101];
     char pswd[201];
+    int otherMsgIndex = 0, usrNameIndex = 0, pswdIndex = 0;
+    //分割字符串提取用户名密码
+    while(arg->package->otherMsg[otherMsgIndex] != '\n')
+    {
+        username[usrNameIndex++] = arg->package->otherMsg[otherMsgIndex++];
+    }
+    otherMsgIndex++;
+    username[usrNameIndex] = '\0';
+    while(arg->package->otherMsg[otherMsgIndex] != '\n')
+    {
+        pswd[pswdIndex++] = arg->package->otherMsg[otherMsgIndex++];
+    }
+    pswd[pswdIndex] = '\0';
     ////生成一个新的id,通过现有用户量进行偏移实现.用户名密码的合法性交由客户端判断
     pthread_rwlock_wrlock(&(arg->idindx->rwlock));
     id = arg->idindx->cur_num + USR_FST_NUM;
     //注册成功,将id发送给客户端
-    char buf[20];
-    sprintf(buf, "%d\n%d\n", CMD_SIGNUP, id);
-    if(0 > send(arg->fd, buf, strlen(buf), 0))
+    arg->package->cmd_0 = CMD_SIGNUP;
+    arg->package->cmd_1 = CMD_CONFIRM;
+    arg->package->sender = 0;
+    arg->package->recver = id;
+    sock_package_removeOtherMsg(arg->package);
+    if(0 > sock_write_package(arg))
     {
         pthread_rwlock_unlock(&(arg->idindx->rwlock));
     } else {
         pthread_rwlock_unlock(&(arg->idindx->rwlock));
-        get_line(arg->fd, username, sizeof(username));
-        get_line(arg->fd, pswd, sizeof(pswd));
+        //用户数据插入数据库
         db_user_sign_up(id, username, pswd);
+        //用户数据在内存中缓存
         usrData_insert(id);
     }
     return NULL;
@@ -180,27 +200,33 @@ void *sock_signin(void *args)
 {
     SockHandlerArgs *arg = args;
     int fd = arg->fd;
-    char buf[100];
-    get_line(fd, buf, sizeof(buf));
-    USRID id = atoi(buf);
+//    char buf[100];
+    USRID id = arg->package->sender;
     if(usrData_exists(id) < 0)
     {
         ////用户不存在
-        sprintf(buf, "%d\n", CMD_REFUSE);
-        send(fd, buf, strlen(buf), 0);
+        arg->package->cmd_1 = CMD_REFUSE;
+        arg->package->sender = 0;
+        arg->package->recver = id;
+        sock_package_removeOtherMsg(arg->package);
+        sock_write_package(arg);
         return NULL;
     }
     ////用户存在,返回用户信息
-    get_line(fd, buf, sizeof(buf));
     char **data = db_fetch_signinUsrData(id);
-    if(strcmp(buf, data[1]) == 0)
+    arg->package->otherMsg[strlen(arg->package->otherMsg)-1] = '\0';//去掉行末回车
+    if(strcmp(arg->package->otherMsg, data[1]) == 0)
     {
         //连接成功,转发线程应向客户端返回线程启动成功的消息CMD_SIGNIN
         arg->id = id;
         sockqueue_add(sock_send, arg);
     } else {
-        sprintf(buf, "%d\n", CMD_REFUSE);
-        send(fd, buf, strlen(buf), 0);
+        //登录失败
+        arg->package->cmd_1 = CMD_REFUSE;
+        arg->package->sender = 0;
+        arg->package->recver = id;
+        sock_package_removeOtherMsg(arg->package);
+        sock_write_package(arg);
     }
     return NULL;
 }
@@ -208,31 +234,15 @@ void *sock_talkto(void *args)
 {
     printf("聊天:\n");
     SockHandlerArgs *arg = args;
-    int fd = arg->fd;
-    char sndBuf[1024];
-    char buf[1024];
-    char toId[10];
-    get_line(fd, toId, sizeof(toId));
-    USRID to_id = atoi(toId);
-
-    sprintf(sndBuf, "%d\n%d\n", CMD_TALKTO, arg->id);
-    get_line(fd, buf, sizeof(buf));
-    strcat(sndBuf, "$\n");
-    do{
-        get_line(fd, buf, sizeof(buf));
-        strcat(sndBuf, buf);
-        strcat(sndBuf, "\n");
-    } while (strcmp(buf, "$"));
-
-    if(!usrData_exists(to_id))
+    if(!usrData_exists(arg->package->recver))
     {
         ////to do sth. when user not exists
         printf("用户不存在\n");
-
-    } else
+    }
+    else
     {
-        printf("转发内容:\n%s\n", sndBuf);
-        usrData_msgqueue_insert(to_id, sndBuf);
+        printf("转发内容:\n%s\n", sock_package_toRowMessage(arg->package));
+        usrData_msgqueue_insert(arg->package->recver, sock_package_toRowMessage(arg->package));
     }
 
     printf("talkto return \n");
@@ -241,44 +251,22 @@ void *sock_talkto(void *args)
 void *sock_newfriend(void *args)
 {
     printf("添加好友\n");
-    SockHandlerArgs *arg;
-    int fd;
-    char sendbuf[1024];
-    char buf[1024];
-    int cmd;
-    USRID sender_id, recver_id;
+    SockHandlerArgs *arg = args;
 
-    arg = args;
-    fd = arg->fd;
-    get_line(fd, buf, sizeof(buf));
-    cmd = atoi(buf);
-    get_line(fd, buf, sizeof(buf));
-    sender_id = atoi(buf);
-    get_line(fd, buf, sizeof(buf));
-    recver_id = atoi(buf);
-
-    sprintf(sendbuf, "%d\n%d\n%d\n%d\n", CMD_NEWFND, cmd, sender_id, recver_id);
-    strcat(sendbuf, "$\n");
-    do{
-        get_line(fd, buf, sizeof(buf));
-        strcat(sendbuf, buf);
-        strcat(sendbuf, "\n");
-    } while (strcmp(buf, "$"));
-
-    if(!usrData_exists(recver_id))
+    if(!usrData_exists(arg->package->recver))
     {
         printf("用户不存在\n");
         return NULL;
     }
 
-    if(cmd == CMD_CONFIRM)
+    if(arg->package->cmd_1 == CMD_CONFIRM)
     {
-        if(0 != redis_newFriend(sender_id, recver_id))
+        if(0 != redis_newFriend(arg->package->sender, arg->package->recver))
             printf("redis new friend fail");
         return NULL;
     }
 
-    usrData_msgqueue_insert(recver_id, sendbuf);
+    usrData_msgqueue_insert(arg->package->recver, sock_package_toRowMessage(arg->package));
     printf("newfnd return\n");
     return NULL;
 }
@@ -286,33 +274,71 @@ void *sock_getUsrInfo(void *args)
 {
     printf("获取用户信息\n");
     SockHandlerArgs *arg = args;
-    char sendbuf[1024];
-    char buf[20];
-    int cmd;
-    USRID sender_id, request_id;
 
-    sprintf(sendbuf, "%d\n", CMD_USRINFO);
-    get_line(arg->fd, buf, sizeof(buf));
-    strcat(sendbuf, buf);
-    strcat(sendbuf, "\n$\n");
-
-    cmd = atoi(buf);
-    get_line(arg->fd, buf, sizeof(buf));
-    sender_id = atoi(buf);
-    get_line(arg->fd, buf,sizeof(buf));
-    request_id = atoi(buf);
-
-    if(cmd == CMD_BRIEF)
+    if(arg->package->cmd_1 == CMD_BRIEF)
     {
         char **info;
-        info = db_fetch_briefUsrData(request_id);
-        strcat(sendbuf, info[0]);
-        strcat(sendbuf, "\n");
-        strcat(sendbuf, info[1]);
-        strcat(sendbuf, "\n$\n");
-        printf("senderId:%d\n", sender_id);
-        usrData_msgqueue_insert(sender_id, sendbuf);
-        printf("请求用户数据：\n%s", sendbuf);
+        info = db_fetch_briefUsrData(arg->package->recver);
+        sock_package_removeOtherMsg(arg->package);
+        arg->package->otherMsg = info[1];
+        arg->package->otherMsg[strlen(info[1])] = '\n';
+        usrData_msgqueue_insert(arg->package->sender, sock_package_toRowMessage(arg->package));
+        printf("请求用户数据：\n%s", sock_package_toRowMessage(arg->package));
     }
+    return NULL;
+}
 
+SockPackage *sock_read_package(void *args)
+{
+    SockHandlerArgs *arg = args;
+    //检查有效性,若读取到""则说明对端关闭
+    char buf[20];
+    int len = get_line(arg->fd, buf, sizeof(buf));
+
+    if(len < 0)
+        error_handler("recv");
+    else if(len == 0)
+        return NULL;
+
+    if(arg->package == NULL)
+        arg->package = calloc(1, sizeof(SockPackage));
+    arg->package->cmd_0 = atoi(buf);
+    get_line(arg->fd, buf, sizeof(buf));
+    arg->package->cmd_1 = atoi(buf);
+    get_line(arg->fd, buf, sizeof(buf));
+    arg->package->sender = atoi(buf);
+    get_line(arg->fd, buf, sizeof(buf));
+    arg->package->recver = atoi(buf);
+    //清空otherMsg
+    if(arg->package->otherMsg != NULL)
+    {
+        free(arg->package->otherMsg);
+        arg->package->otherMsg = NULL;
+    }
+    //从socket缓冲区中读取otherMsg
+    char msg[1024];
+    char otherMsg[1024] = "";
+    get_line(arg->fd, buf, sizeof(buf));//  $\n
+    get_line(arg->fd, msg, sizeof(msg));
+    while(strcmp(msg, "$\n") != 0)
+    {
+        strcat(otherMsg, msg);
+        strcat(otherMsg, "\n");
+        get_line(arg->fd, msg, sizeof(msg));
+    }
+    //读取到otherMsg
+    if(strcmp(otherMsg, "") != 0)
+    {
+        char *finalMsg = calloc(strlen(otherMsg), sizeof(char));
+        strcpy(finalMsg, otherMsg);
+        arg->package->otherMsg = finalMsg;
+    }
+    return arg->package;
+}
+
+int sock_write_package(void *args)
+{
+    SockHandlerArgs *arg = args;
+    const char *msg = sock_package_toRowMessage(arg->package);
+    return send(arg->fd, msg, strlen(msg), 0);
 }

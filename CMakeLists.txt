@@ -16,7 +16,7 @@ add_executable(chatServer
         usrData.h
         usrData.c
         sockHandler.h
-        sockHandler.c rbTree.h rbTree.c)
+        sockHandler.c rbTree.h rbTree.c sockPackage.h sockPackage.c)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
 target_link_libraries(chatServer libmysqlclient.so)

@@ -179,6 +179,7 @@ int main()
                 arg->fd = clientsock;
                 arg->id = 0;
                 arg->idindx = usr_data;
+                arg->package = sock_package_newPackage();
                 sockqueue_add(sock_recv, arg);
                 /*clientsock*/
             }

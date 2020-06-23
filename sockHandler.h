@@ -8,6 +8,7 @@
 
 #include <sys/types.h>
 #include "usrData.h"
+#include "sockPackage.h"
 
 enum COMMAND {
     CMD_SIGNUP = 0,
@@ -20,13 +21,13 @@ enum COMMAND {
     CMD_USRINFO,
     CMD_BRIEF,
     CMD_DETAIL
-
 };
 
 typedef struct sock_handler_args{
-    int fd;
-    USRData *idindx;
-    USRID id;
+    int fd;             //此连接的套接字描述符
+    USRData *idindx;    //此连接对应用户的数据
+    USRID id;           //此连接对应用户的id
+    SockPackage *package;
 }SockHandlerArgs;
 
 typedef struct command_switch{
@@ -45,6 +46,8 @@ void *sock_signin(void *args);
 void *sock_talkto(void *args);
 void *sock_newfriend(void *args);
 void *sock_getUsrInfo(void *args);
+SockPackage *sock_read_package(void *args);
+int sock_write_package(void *args);
 
 #endif //CHATSERVER_SOCKHANDLER_H
 

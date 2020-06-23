@@ -5,8 +5,6 @@
 #ifndef CHATSERVER_RBTREE_H
 #define CHATSERVER_RBTREE_H
 
-#endif //CHATSERVER_RBTREE_H
-
 #define rbt_parent(node) ((node)->parent)
 #define rbt_set_red(node) (node)->color = RED
 #define rbt_set_black(node) if((node)) (node)->color = BLACK
@@ -51,4 +49,6 @@ static void rbt_delete_fixup(RBTree *rbTree, Node *node, Node *parent);
 Node *rbt_new_node();
 
 Node *rbt_find(RBTree *rbTree, void *key);
+
+#endif //CHATSERVER_RBTREE_H
 

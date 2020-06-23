@@ -5,7 +5,6 @@
 #ifndef CHATSERVER_SOCK_QUEUE_H
 #define CHATSERVER_SOCK_QUEUE_H
 
-#endif //CHATSERVER_SOCK_QUEUE_H
 #include <pthread.h>
 #define SOCKQUEUE_MAX_NUM 10
 
@@ -31,3 +30,5 @@ int sockqueue_init(int max_num);
 int sockqueue_add(void *(*callback_handler)(void*arg), void *arg);
 
 struct sock *sockqueue_get();
+
+#endif //CHATSERVER_SOCK_QUEUE_H
