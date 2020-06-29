@@ -8,128 +8,128 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug"/>
+				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug"/>
+				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug"/>
+				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="chatServer">
-				<Option output="/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/chatServer" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug"/>
+				<Option output="/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/chatServer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 chatServer"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 chatServer"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="chatServer/fast">
-				<Option output="/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/chatServer" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug"/>
+				<Option output="/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/chatServer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
 					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
 					<Add directory="/usr/include/x86_64-linux-gnu"/>
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 chatServer/fast"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/home/wojiaojd/CLionProjects/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 chatServer/fast"/>
+					<CompileFile command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j2 -f &quot;/home/wojiaojd/CLionProjects/chatServer/chatServer/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/database.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/database.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/database.h">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/database.h">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/errorhandler.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/errorhandler.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/errorhandler.h">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/errorhandler.h">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/main.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/main.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/pthreadpool.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/pthreadpool.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/pthreadpool.h">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/pthreadpool.h">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/rbTree.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/rbTree.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/rbTree.h">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/rbTree.h">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/sockHandler.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/sockHandler.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/sockHandler.h">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/sockHandler.h">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/sockPackage.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/sockPackage.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/sockPackage.h">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/sockPackage.h">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/sockqueue.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/sockqueue.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/sockqueue.h">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/sockqueue.h">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/usrData.c">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/usrData.c">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/usrData.h">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/usrData.h">
 			<Option target="chatServer"/>
 		</Unit>
-		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/CMakeLists.txt">
+		<Unit filename="/home/wojiaojd/CLionProjects/chatServer/chatServer/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

@@ -100,12 +100,17 @@ int get_line(int fd, char *buf, int len)
 /*这是接收用户发来的请求,如果是转发请求,则把消息挂到id索引数据结构的转发队列中*/
 void *sock_recv(void *args)
 {
+    printf("recv\n");
     SockHandlerArgs *arg = args;
     int client = arg->fd;
     char buf[10];
     while(1)
     {
         SockPackage *package = sock_read_package(arg);
+
+        if(package)
+            printf("%s", sock_package_toRowMessage(package));
+
         if(package != NULL) {
             printf("COMMAND:%d\n", package->cmd_0);
             cmd_switch(package->cmd_0, arg);
@@ -258,15 +263,18 @@ void *sock_newfriend(void *args)
         printf("用户不存在\n");
         return NULL;
     }
-
+    //如果是统一好友申请，在redis中缓存好友关系
     if(arg->package->cmd_1 == CMD_CONFIRM)
     {
         if(0 != redis_newFriend(arg->package->sender, arg->package->recver))
+        {
             printf("redis new friend fail");
-        return NULL;
+            return NULL;
+        }
     }
 
     usrData_msgqueue_insert(arg->package->recver, sock_package_toRowMessage(arg->package));
+
     printf("newfnd return\n");
     return NULL;
 }
@@ -283,6 +291,7 @@ void *sock_getUsrInfo(void *args)
         arg->package->otherMsg = info[1];
         arg->package->otherMsg[strlen(info[1])] = '\n';
         usrData_msgqueue_insert(arg->package->sender, sock_package_toRowMessage(arg->package));
+        arg->package->otherMsg = NULL;
         printf("请求用户数据：\n%s", sock_package_toRowMessage(arg->package));
     }
     return NULL;
@@ -290,18 +299,22 @@ void *sock_getUsrInfo(void *args)
 
 SockPackage *sock_read_package(void *args)
 {
+    printf("read_package\n");
     SockHandlerArgs *arg = args;
     //检查有效性,若读取到""则说明对端关闭
     char buf[20];
     int len = get_line(arg->fd, buf, sizeof(buf));
-
+    printf("len=%d\n", len);
     if(len < 0)
         error_handler("recv");
     else if(len == 0)
+    {
         return NULL;
+    }
 
-    if(arg->package == NULL)
+    if(arg->package == NULL) {
         arg->package = calloc(1, sizeof(SockPackage));
+    }
     arg->package->cmd_0 = atoi(buf);
     get_line(arg->fd, buf, sizeof(buf));
     arg->package->cmd_1 = atoi(buf);
@@ -312,7 +325,9 @@ SockPackage *sock_read_package(void *args)
     //清空otherMsg
     if(arg->package->otherMsg != NULL)
     {
+        printf("before free\n");
         free(arg->package->otherMsg);
+        printf("free otherMsg\n");
         arg->package->otherMsg = NULL;
     }
     //从socket缓冲区中读取otherMsg
@@ -320,7 +335,8 @@ SockPackage *sock_read_package(void *args)
     char otherMsg[1024] = "";
     get_line(arg->fd, buf, sizeof(buf));//  $\n
     get_line(arg->fd, msg, sizeof(msg));
-    while(strcmp(msg, "$\n") != 0)
+
+    while(strcmp(msg, "$") != 0)
     {
         strcat(otherMsg, msg);
         strcat(otherMsg, "\n");
@@ -333,6 +349,7 @@ SockPackage *sock_read_package(void *args)
         strcpy(finalMsg, otherMsg);
         arg->package->otherMsg = finalMsg;
     }
+    printf("read_package_return\n");
     return arg->package;
 }
 

@@ -144,7 +144,7 @@ int my_cmp(void *left_key, void *right_key)
     else
         return 0;
 }
-
+//初始化用户数据在内存中的数据结构，该结构是全局数据结构
 USRData *usrData_init()
 {
     if(usr_data != NULL)
@@ -158,7 +158,9 @@ USRData *usrData_init()
     {
         error_handler("usrDataArray_mutex_r_init");
     }
-
+    /*
+     * TODO：数据库中已有的用户id在内存中初始化
+     * */
     usr_data->cur_num = 0;
     return usr_data;
 }

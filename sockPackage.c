@@ -34,7 +34,7 @@ const char * sock_package_toRowMessage(SockPackage * package)
         strcat(buf, "$\n");
     } else {
         strcat(buf, package->otherMsg);
-        strcat(buf, "\n$\n");
+        strcat(buf, "$\n");
     }
     char *res = calloc(strlen(buf), sizeof(char));
     strcpy(res, buf);
